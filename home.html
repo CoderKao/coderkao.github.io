@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="utf-8">
+   <meta http-equiv="x-ua-compatible" content="ie=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+   <title>AI智慧企業碳排放網站</title>
+
+   <!-- 風格設定 -->
+   <style>
+      .navbar-brand {
+         display: inline-flex;
+         justify-content: center;
+         align-items: center;
+         text-align: center;
+         width: 100%;
+         flex-grow: 1;
+      }
+
+      #chat-container {
+         position: fixed;
+         bottom: 0;
+         left: 0;
+         right: 0;
+         width: 100%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         height: 10vh;
+      }
+   </style>
+</head>
+
+<!-- 頁面上方設定 -->
+
+<body>
+   <header>
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+         <div class="container-fluid">
+            <a class="navbar-brand">專題</a>
+         </div>
+      </nav>
+   </header>
+
+
+   <!-- 聊天訊息設定 -->
+   <main class="flex-shrink-0">
+      <div class="container">
+         <br>
+         <br>
+         <br>
+         <div class="list-group-item list-group-item-action d-flex gap-3 py-3">
+            <img src="https://drive.google.com/uc?export=view&id=1gTIwUigq-1Qb0Vi06FZS1VL0YnSKQBHM" alt="twbs"
+               width="50" height="50" class="m-auto rounded-circle flex-shrink-0">
+            <div class="d-flex flex-column gap-2 w-100 justify-content-between">
+               <div>
+                  <!--text-md-center置中-->
+                  <p class="mb-0 opacity-75">ChatGPT</p>
+               </div>
+               <!-- 聊天輸入設定 -->
+               <div class="d-flex justify-content-between">
+                  <input type="text" class="form-control flex-grow-1 me-2" id="user-input">
+                  <button id="send-button" class="btn btn-light"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                        height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                        <path
+                           d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
+                     </svg></button>
+               </div>
+            </div>
+         </div>
+
+         <div id="list-group" class="list-group w-auto"></div>
+
+         <!--
+         <p style="text-align: center; position: relative; top: 8px;">Chat Record</p>
+         <div id="chat-record" class="list-group w-auto"></div>
+         -->
+      </div>
+   </main>
+
+   <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+      integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"></script>
+
+   <script>
+      // 把更新對話欄的地方變成一個新的方程，然後用兩種方式來呼叫這個方程
+      // 1 - 按發送按鈕
+      // 2 - 鍵盤的回送enter or return
+
+      // 更新對話欄方程：
+      function sendQuestion() {
+         // 把用戶輸入的問題取出來
+         let inputQuestion = $("#user-input").val();
+
+         // 清除問話框
+         $("#user-input").val("");
+
+         // 更新對話值的同時也保持保持舊的問答
+         let appendConversation = "";
+         appendConversation += `
+            <a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3">
+                <img src="https://pic.616pic.com/ys_img/00/06/27/5m1AgeRLf3.jpg" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+                <div class="d-flex gap-2 w-100 justify-content-between">
+                    <div>
+                        <p class="mb-0 opacity-75">${inputQuestion}</p>
+                    </div>
+                </div>
+            </a>
+            `;
+
+         // 更新html畫面，把對話加到list-group裡面
+         $("#list-group").append(appendConversation);
+         //$("#chat-record").append(appendConversation);
+
+         $.ajax({
+            type: "POST",
+            url: "/",
+            data: { 'prompt': inputQuestion },
+            success: function (data) {
+               let ai_answers = "";
+               ai_answers += `
+                    <a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3">
+                        <img src="https://drive.google.com/uc?export=view&id=1gTIwUigq-1Qb0Vi06FZS1VL0YnSKQBHM" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+                        <div class="d-flex gap-2 w-100 justify-content-between">
+                            <div>
+                                <p class="mb-0 opacity-75">${data.ai_answer}</p>
+                            </div>
+                        </div>
+                    </a>
+                    `;
+               $("#list-group").append(ai_answers)
+            }
+         });
+      }
+
+      // 點擊按金的時後去呼叫ajax方程
+      $("#send-button").click(function () {
+         sendQuestion();
+      });
+
+      // 鍵盤按下enter/return的時後呼叫ajax方程
+      $("#user-input").keypress(function (event) {
+         if (event.keyCode === 13) {
+            sendQuestion();
+         }
+      });
+   </script>
+</body>
+
+</html>
