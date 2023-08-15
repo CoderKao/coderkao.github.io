@@ -5,7 +5,7 @@ def get_open_ai_api_chat_response(prompt):
     # 輸入open api key
     # openai.api_key = "你的api key"
     # 範列：openai.api_key = "sdfdsfasdfaewfgegerfvb"
-    openai.api_key = "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"
+    openai.api_key = "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"
 
     # 範例文件
     # openai.ChatCompletion.create(
